@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  descriptions_database:
+    image: bitnami/mariadb:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_SKIP_TEST_DB=yes
+      - MARIADB_ROOT_USER=root
+      - MARIADB_ROOT_PASSWORD=root_developer_1234
+      - MARIADB_USER=firefly
+      - MARIADB_PASSWORD=firefly_developer_1234
+      - MARIADB_DATABASE=service_descriptions_db
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    volumes:
+      - /images_persistent/mariadb:/bitnami/mariadb
+      - data:/bitnami/mariadb/data
+
+  descriptions_interface:
+    build:
+      context: ./descriptions/
+      dockerfile: Dockerfile
+    environment:
+      - MARIADB_DATABASE_NAME=service_descriptions_db
+      - MARIADB_DATABASE_USERNAME=firefly
+      - MARIADB_DATABASE_PASSWORD=firefly_developer_1234
+      - MARIADB_DATABASE_HOST_ADDRESS=descriptions_database
+      - MARIADB_DATABASE_HOST_PORT=3306
+      - PPTESTER_DATABATE_REMOTE=True
+      - FLASK_APP=/app/source/app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    working_dir: /app/source
+    command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=5000"
+    ports:
+      - "5000:5000"
+    expose:
+      - 5000
+    depends_on:
+      - descriptions_database
+
+volumes:
+  data:
+    driver: local
