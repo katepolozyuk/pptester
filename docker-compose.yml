@@ -41,6 +41,29 @@ services:
     depends_on:
       - descriptions_database
 
+  pptester_application:
+    build:
+      context: ./tester/
+      dockerfile: Dockerfile
+    environment:
+      - MARIADB_DATABASE_NAME=service_descriptions_db
+      - MARIADB_DATABASE_USERNAME=firefly
+      - MARIADB_DATABASE_PASSWORD=firefly_developer_1234
+      - MARIADB_DATABASE_HOST_ADDRESS=descriptions_database
+      - MARIADB_DATABASE_HOST_PORT=3306
+      - PPTESTER_DATABATE_REMOTE=True
+      - FLASK_APP=/app/source/app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    working_dir: /app/source
+    command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=7200"
+    ports:
+      - "7200:7200"
+    expose:
+      - 7200
+    depends_on:
+      - descriptions_database
+
 volumes:
   data:
     driver: local
