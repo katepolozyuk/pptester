@@ -18,28 +18,41 @@ services:
       - /images_persistent/mariadb:/bitnami/mariadb
       - data:/bitnami/mariadb/data
 
-  descriptions_interface:
+  mock_service:
     build:
-      context: ./descriptions/
+      context: ./mock/
       dockerfile: Dockerfile
-    environment:
-      - MARIADB_DATABASE_NAME=service_descriptions_db
-      - MARIADB_DATABASE_USERNAME=firefly
-      - MARIADB_DATABASE_PASSWORD=firefly_developer_1234
-      - MARIADB_DATABASE_HOST_ADDRESS=descriptions_database
-      - MARIADB_DATABASE_HOST_PORT=3306
-      - PPTESTER_DATABATE_REMOTE=True
-      - FLASK_APP=/app/source/app.py
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
-    working_dir: /app/source
-    command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=5000"
-    ports:
-      - "5000:5000"
-    expose:
-      - 5000
-    depends_on:
-      - descriptions_database
+      working_dir: /app/source
+      command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=6500"
+      ports:
+        - "5000:5000"
+      expose:
+        - 5000
+      depends_on:
+        - descriptions_database
+
+  #descriptions_interface:
+  #  build:
+  #    context: ./descriptions/
+  #    dockerfile: Dockerfile
+  #  environment:
+  #    - MARIADB_DATABASE_NAME=service_descriptions_db
+  #    - MARIADB_DATABASE_USERNAME=firefly
+  #    - MARIADB_DATABASE_PASSWORD=firefly_developer_1234
+  #    - MARIADB_DATABASE_HOST_ADDRESS=descriptions_database
+  #    - MARIADB_DATABASE_HOST_PORT=3306
+  #    - PPTESTER_DATABATE_REMOTE=True
+  #    - FLASK_APP=/app/source/app.py
+  #    - FLASK_ENV=development
+  #    - FLASK_DEBUG=1
+  #  working_dir: /app/source
+  #  command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=5000"
+  #  ports:
+  #    - "5000:5000"
+  #  expose:
+  #    - 5000
+  #  depends_on:
+  #    - descriptions_database
 
 volumes:
   data:

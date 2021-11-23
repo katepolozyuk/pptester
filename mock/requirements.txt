@@ -1,0 +1,6 @@
+flask
+redis
+mariadb
+sqlalchemy
+debugpy
+gevent

@@ -1,0 +1,58 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/.git": true,
+            "**/*.pyc": true,
+            "**/__pycache__": true,
+            "**/.gitignore": true,
+        }
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Python: Flask",
+                "type": "python",
+                "request": "launch",
+                "module": "flask",
+                "env": {
+                    "FLASK_APP": "${workspaceFolder}/app.py",
+                    "FLASK_ENV": "development",
+                    "FLASK_DEBUG": "1",
+                    "FLASK_RUN_PORT":"8000"
+                },
+                "args": [
+                    "run",
+                    "--no-debugger",
+                    "--no-reload"
+                ],
+                "jinja": true
+            },
+            {
+                "name": "Python: Current File",
+                "type": "python",
+                "request": "launch",
+                "program": "${file}",
+                "console": "integratedTerminal"
+            },
+            {
+                "name": "Python: Remote Attach",
+                "type": "python",
+                "request": "attach",
+                "port": 5678,
+                "host": "0.0.0.0",
+                "pathMappings": [
+                  {
+                    "localRoot": "${workspaceFolder}/source",
+                    "remoteRoot": "/app/source"
+                  }
+                ]
+              }
+        ]
+    }
+}
