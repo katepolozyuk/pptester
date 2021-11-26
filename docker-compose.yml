@@ -81,6 +81,7 @@ services:
       - MARIADB_DATABASE_HOST_ADDRESS=descriptions_database
       - MARIADB_DATABASE_HOST_PORT=3306
       - PPTESTER_DATABATE_REMOTE=True
+      - PPTESTER_LOG_FILE=/usr/share/pptester/output.log
       - FLASK_APP=/app/source/app.py
       - FLASK_ENV=development
       - FLASK_DEBUG=1

@@ -24,6 +24,7 @@
                     "FLASK_APP": "${workspaceFolder}/descriptions/source/app.py",
                     "FLASK_ENV": "development",
                     "FLASK_DEBUG": "1",
+                    "PPTESTER_LOG_FILE": "${workspaceFolder}/descriptions/data/output.log",
                     "PPTESTER_DATABATE_REMOTE": "True",
                     "MARIADB_DATABASE_NAME":"service_descriptions_db",
                     "MARIADB_DATABASE_USERNAME":"firefly",

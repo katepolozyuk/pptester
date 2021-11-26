@@ -1,0 +1,4 @@
+
+time:[26/11/2021 03:56:14] service:[Mock Service] endpoint:[/data_access_endpoint] method:[GET] status:[starting] message:[starting test case]
+time:[26/11/2021 03:56:17] service:[Mock Service] endpoint:[/data_access_endpoint] method:[GET] status:[running] message:[test case started]
+time:[26/11/2021 03:56:17] service:[Mock Service] endpoint:[/data_access_endpoint] method:[GET] status:[success] message:[test case succeded]
