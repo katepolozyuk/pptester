@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% block title %}
+    <a href="{{ url_for('show_service', service_id=service.id) }}"><h2>{{ service.name }}</h2></a>
+    {% endblock %}
+    <span class="badge badge-primary">{{ service.time_created }}</span>
+    <span class="badge badge-primary">{{ service.time_updated or service.time_created }}</span>
+    <a href="{{ url_for('edit_service', service_id=service.id) }}"><span class="badge badge-warning">Edit Service Data</span></a>
+    <hr>
+
+    <form method="post">
+        <div class="form-group">
+            <label for="endpoint">Create "{{ service.name }}" Service Resource Endpoint</label>
+            <input type="text" name="endpoint" placeholder="Resource Endpoint" class="form-control" value="{{ request.form['endpoint'] }}"></input>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+{% endblock %}

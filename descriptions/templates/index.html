@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Welcome to PPTester Interface {% endblock %}</h1>
+    <hr>
+    {% for service in services %}
+        <a href="{{ url_for('show_service', service_id=service.id) }}">
+            <h2>{{ service.name }}</h2>
+        </a>
+        <span class="badge badge-primary">Create time: {{ service.time_created }}</span>
+        <span class="badge badge-primary">Update time: {{ service.time_update or service.time_created }}</span>
+        <a href="{{ url_for('edit_service', service_id=service.id) }}">
+            <span class="badge badge-warning">Edit Service Data</span>
+        </a>
+        <hr>
+    {% endfor %}
+{% endblock %}
