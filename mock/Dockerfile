@@ -12,6 +12,7 @@ RUN pacman -S python3 --noconfirm
 RUN pacman -S python-pip --noconfirm
 RUN pacman -S mariadb-libs --noconfirm
 RUN pacman -S phpmyadmin --noconfirm
+RUN pacman -S filebeat --noconfirm
 
 #RUN pacman -S --needed --noconfirm sudo # Install sudo
 #RUN useradd builduser -m # Create the builduser

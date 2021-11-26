@@ -1,18 +1,74 @@
 version: "3.9"
 services:
-  influxdb:
-    image: influxdb:latest
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: 7.8.0
+    volumes:
+      - type: bind
+        source: ./elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
     ports:
-      - "8086:8086"
-    volumes:
-      - persistent_influxdb2:/var/lib/influxdb2:rw
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: changeme
+      discovery.type: single-node
 
-  telegraf:
-    image: telegraf
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: 7.8.0
     volumes:
-      - ./configurations/telegraf.conf:/etc/telegraf/telegraf.conf
+      - type: bind
+        source: ./kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
     depends_on:
-      - influxdb
+      - elasticsearch
+
+  logstash:
+    build:
+      context: logstash/
+      args:
+        ELK_VERSION: 7.8.0
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - type: bind
+        source: ./logstash/config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    depends_on:
+      - elasticsearch
+      - descriptions_interface
+
+  filebeat:
+    build:
+      context: filebeat/
+    volumes:
+      - type: volume
+        source: pptester_shared
+        target: /usr/share/pptester
+        read_only: true
 
   descriptions_interface:
     build:
@@ -29,14 +85,17 @@ services:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
     working_dir: /app/source
-    command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=5000"
+    command: "python -m flask run --no-reload --no-debugger --host=0.0.0.0 --port=7777"
+    volumes:
+      - type: volume
+        source: pptester_shared
+        target: /usr/share/pptester
     ports:
-      - "5000:5000"
+      - "7777:7777"
     expose:
-      - 5000
+      - 7777
     depends_on:
       - descriptions_database
-
 
   descriptions_database:
     image: bitnami/mariadb:latest
@@ -76,5 +135,7 @@ services:
 volumes:
   data:
     driver: local
-  persistent_influxdb2:
+  elasticsearch:
+    driver: local
+  pptester_shared:
     driver: local
