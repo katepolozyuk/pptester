@@ -7,6 +7,7 @@ from server.testing import PPTesterCore
 from utils.environment import find_environment_variable
 from utils.route import find_directory_path, find_working_directory
 
+import threading
 
 # ================================================== APP =====================================================
 working_directory = find_working_directory()
@@ -187,11 +188,24 @@ def test_resource_by_descriptions(service_id:int, resource_id:int) -> Response:
     resource_record = server.resource_dao.get_resource_record(service_id, resource_id)
     request_records = server.request_dao.get_request_records(resource_id)
 
-    new_test_statuses = tester.test_multiple_methods(service_record, resource_record, request_records)
-    for new_test_status, request_record in zip(new_test_statuses, request_records):
-        if (request_record["test_status"] != new_test_status):
-            server.request_dao.update_request_record_test_status(resource_id, request_record.id, new_test_status)
+    def test_function(tester_service, server, service_record, resource_record, request_records):
+        new_test_statuses = tester_service.test_multiple_methods(service_record, resource_record, request_records)
+        for new_test_status, request_record in zip(new_test_statuses, request_records):
+            if (request_record["test_status"] != new_test_status):
+                server.request_dao.update_request_record_test_status(resource_id, request_record.id, new_test_status)
 
+    def cycled_range(tester_service, server, service_record, resource_record, request_records):
+        for i in range(0, 45000):
+            test_function(tester_service, server, service_record, resource_record, request_records)
+
+    def test_mt(server, service_record, resource_record, request_records):
+        threads = [threading.Thread(target=cycled_range, args=(tester, server, service_record, resource_record, request_records)) for i in range(0, 4)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+    test_mt(server, service_record, resource_record, request_records)
     return redirect(url_for("show_resource_description", service_id=service_id, resource_id=resource_id))
 
 
